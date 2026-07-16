@@ -1,0 +1,249 @@
+Build a professional financial intelligence dashboard called " FinMatrix".
+
+The website should look like a Bloomberg Terminal combined with a futuristic Matrix-style interface.
+
+The entire website must be in English.
+
+## Design & UI
+
+Create a premium dark-themed financial workstation interface.
+
+Design requirements:
+- Bloomberg Terminal inspired layout
+- Matrix/futuristic aesthetic
+- Black background
+- Neon green and blue highlights
+- Terminal-style panels
+- Real-time data feeling
+- Professional investor dashboard experience
+- Smooth animations
+- Responsive design for desktop and tablet
+
+## Main Dashboard
+
+Create a central live market dashboard.
+
+Display financial data in the middle of the screen:
+
+### Market Data
+
+Fetch live market data using Yahoo Finance data sources (yfinance library, Yahoo Finance endpoints, or reliable Yahoo Finance integrations).
+
+Track:
+
+- BIST 100 index
+- BIST 100 companies
+- Major global stocks
+- US stocks
+- ETFs
+- Gold
+- Silver
+- Oil
+- Bitcoin
+- Major currencies
+
+Examples of BIST tickers:
+- THYAO.IS
+- GARAN.IS
+- AKBNK.IS
+- SISE.IS
+
+For every asset display:
+
+- Current price
+- Daily percentage change
+- Price movement
+- Trading volume
+- Historical charts
+- Mini sparkline charts
+- Market status
+
+Create automated background jobs:
+
+- Update financial data every 5 minutes
+- Store historical price data in a database
+- Automatically refresh dashboard values
+
+
+## Financial News Section
+
+Place the latest financial news section on the top right side of the dashboard.
+
+Automatically collect financial news using:
+
+- News APIs
+- RSS feeds
+- Yahoo Finance news sources
+
+Categories:
+
+- Stock Market
+- Central Banks
+- Inflation
+- Interest Rates
+- Commodities
+- Crypto
+- Global Markets
+- Company News
+
+Each news card should include:
+
+- News title
+- Source
+- Publication date
+- Short summary
+- Link to original article
+
+The news section should automatically refresh with new articles.
+
+
+## Economic Calendar
+
+Create a professional economic calendar section.
+
+Include important events:
+
+- FED interest rate decisions
+- FED speeches
+- Inflation announcements
+- CPI data
+- Employment reports
+- Unemployment data
+- GDP announcements
+- Central bank meetings
+
+Display:
+
+- Event name
+- Country
+- Date
+- Time
+- Importance level:
+  - High
+  - Medium
+  - Low
+
+
+Use economic data sources such as:
+
+- Trading Economics API
+- FRED API
+- Other reliable economic calendar sources
+
+
+## AI Market Summary
+
+Add an AI-powered market analysis section.
+
+Generate daily summaries based on:
+
+- Market movements
+- News sentiment
+- Economic events
+- Price changes
+
+Example:
+
+"Today's market overview:
+BIST 100 gained 1.4% driven by banking stocks. Gold increased due to expectations of lower interest rates."
+
+Create:
+- Morning market briefing
+- Daily closing report
+- Important market alerts
+
+
+## Company Analysis Pages
+
+Create detailed pages for individual companies.
+
+Each company page should include:
+
+- Stock price
+- Market capitalization
+- Revenue
+- Profit
+- P/E ratio
+- Debt information
+- Historical performance
+- Financial charts
+- Company news
+
+
+## Admin Dashboard
+
+Create a secure admin panel.
+
+Admin features:
+
+- Add/edit/remove financial data
+- Add economic calendar events
+- Manage news sources
+- Manage tracked assets
+- Change dashboard settings
+
+
+## Technical Requirements
+
+Frontend:
+- React
+- Tailwind CSS
+- Chart.js or Recharts
+
+Backend:
+- Node.js + Express
+
+Database:
+- PostgreSQL or SQLite
+
+Required features:
+
+- API integrations
+- Scheduled background jobs
+- Automatic data updates every 5 minutes
+- Database storage
+- Clean architecture
+- Production-ready folder structure
+- Error handling
+- Loading states
+- Responsive UI
+
+
+## Data Architecture
+
+Use this structure:
+
+Yahoo Finance
+        |
+        ↓
+Backend API
+        |
+        ↓
+Database
+        |
+        ↓
+Financial Dashboard
+
+
+News APIs/RSS
+        |
+        ↓
+News Processing
+        |
+        ↓
+News Dashboard
+
+
+Economic APIs
+        |
+        ↓
+Economic Calendar
+
+
+## Important
+
+Use Yahoo Finance data source (yfinance or Yahoo Finance endpoints) for market data.
+
+Create scheduled background jobs that update prices every 5 minutes.
+
+The goal is to create a professional Bloomberg-style financial terminal called "Finansanlik" that feels like a real institutional market analysis platform.

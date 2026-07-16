@@ -3,6 +3,7 @@ import cors from "cors";
 import pinoHttp from "pino-http";
 import router from "./routes";
 import { logger } from "./lib/logger";
+import { startScheduler, runInitialDataFetch } from "./lib/scheduler";
 
 const app: Express = express();
 
@@ -30,5 +31,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
+
+// Start background scheduler and run initial fetch
+startScheduler();
+runInitialDataFetch().catch((err) => {
+  logger.warn({ err }, "Initial data fetch failed (non-fatal)");
+});
 
 export default app;

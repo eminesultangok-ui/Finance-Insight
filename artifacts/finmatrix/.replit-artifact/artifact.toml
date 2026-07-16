@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "FinMatrix"
+version = "1.0.0"
+id = "artifacts/finmatrix"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22138
+
+[services.development]
+run = "pnpm --filter @workspace/finmatrix run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/finmatrix", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/finmatrix/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22138"
+BASE_PATH = "/"

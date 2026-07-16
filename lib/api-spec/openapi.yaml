@@ -1,36 +1,812 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
-  version: 0.1.0
-  description: API specification
+  version: 1.0.0
+  description: FinMatrix Financial Intelligence Dashboard API
+
 servers:
   - url: /api
     description: Base API path
+
 tags:
   - name: health
-    description: Health operations
+  - name: market
+  - name: news
+  - name: calendar
+  - name: ai
+  - name: companies
+  - name: admin
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
-          description: Healthy
+          description: OK
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /market/quotes:
+    get:
+      operationId: getMarketQuotes
+      tags: [market]
+      summary: Get all tracked asset quotes
+      parameters:
+        - in: query
+          name: category
+          schema:
+            type: string
+            enum: [all, indices, stocks, bist, etf, commodities, crypto, currencies]
+      responses:
+        "200":
+          description: List of market quotes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MarketQuote"
+
+  /market/quotes/{symbol}:
+    get:
+      operationId: getMarketQuoteBySymbol
+      tags: [market]
+      summary: Get quote for a specific symbol
+      parameters:
+        - in: path
+          name: symbol
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Market quote detail with sparkline
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketQuoteDetail"
+        "404":
+          description: Symbol not found
+
+  /market/history:
+    get:
+      operationId: getMarketHistory
+      tags: [market]
+      summary: Get historical OHLCV data
+      parameters:
+        - in: query
+          name: symbol
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: period
+          schema:
+            type: string
+            enum: [1d, 5d, 1mo, 3mo, 6mo, 1y, 5y]
+            default: 1mo
+        - in: query
+          name: interval
+          schema:
+            type: string
+            enum: [1m, 5m, 15m, 1h, 1d, 1wk, 1mo]
+            default: 1d
+      responses:
+        "200":
+          description: Historical OHLCV data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OHLCVBar"
+
+  /market/indices:
+    get:
+      operationId: getMarketIndices
+      tags: [market]
+      summary: Get major market indices
+      responses:
+        "200":
+          description: List of index quotes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MarketQuote"
+
+  /news:
+    get:
+      operationId: getNews
+      tags: [news]
+      summary: Get financial news articles
+      parameters:
+        - in: query
+          name: category
+          schema:
+            type: string
+            enum: [all, stock_market, central_banks, inflation, interest_rates, commodities, crypto, global_markets, company_news]
+        - in: query
+          name: limit
+          schema:
+            type: number
+            default: 20
+        - in: query
+          name: offset
+          schema:
+            type: number
+            default: 0
+      responses:
+        "200":
+          description: Paginated news articles
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewsPage"
+
+  /calendar:
+    get:
+      operationId: getEconomicCalendar
+      tags: [calendar]
+      summary: Get upcoming economic calendar events
+      parameters:
+        - in: query
+          name: importance
+          schema:
+            type: string
+            enum: [all, high, medium, low]
+        - in: query
+          name: country
+          schema:
+            type: string
+        - in: query
+          name: days
+          schema:
+            type: number
+            default: 7
+      responses:
+        "200":
+          description: List of economic events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EconomicEvent"
+
+  /ai/summary:
+    get:
+      operationId: getAiMarketSummary
+      tags: [ai]
+      summary: Get AI-generated market summary
+      parameters:
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum: [morning, closing, alerts]
+            default: morning
+      responses:
+        "200":
+          description: AI-generated market analysis
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiSummary"
+
+  /companies/{symbol}:
+    get:
+      operationId: getCompanyDetail
+      tags: [companies]
+      summary: Get detailed company information
+      parameters:
+        - in: path
+          name: symbol
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Detailed company data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyDetail"
+        "404":
+          description: Company not found
+
+  /admin/assets:
+    get:
+      operationId: getAdminAssets
+      tags: [admin]
+      summary: List all tracked assets
+      responses:
+        "200":
+          description: List of tracked assets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TrackedAsset"
+    post:
+      operationId: createAdminAsset
+      tags: [admin]
+      summary: Add an asset to tracking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrackedAssetInput"
+      responses:
+        "201":
+          description: Asset created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrackedAsset"
+
+  /admin/assets/{id}:
+    put:
+      operationId: updateAdminAsset
+      tags: [admin]
+      summary: Update tracked asset
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrackedAssetUpdate"
+      responses:
+        "200":
+          description: Asset updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrackedAsset"
+    delete:
+      operationId: deleteAdminAsset
+      tags: [admin]
+      summary: Remove a tracked asset
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Asset deleted
+
+  /admin/news-sources:
+    get:
+      operationId: getAdminNewsSources
+      tags: [admin]
+      summary: List news sources
+      responses:
+        "200":
+          description: List of news sources
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NewsSource"
+    post:
+      operationId: createAdminNewsSource
+      tags: [admin]
+      summary: Add a news source
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewsSourceInput"
+      responses:
+        "201":
+          description: News source created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewsSource"
+
+  /admin/news-sources/{id}:
+    delete:
+      operationId: deleteAdminNewsSource
+      tags: [admin]
+      summary: Remove a news source
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: News source deleted
+
+  /admin/calendar-events:
+    get:
+      operationId: getAdminCalendarEvents
+      tags: [admin]
+      summary: List all calendar events
+      responses:
+        "200":
+          description: List of calendar events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EconomicEvent"
+    post:
+      operationId: createAdminCalendarEvent
+      tags: [admin]
+      summary: Add a calendar event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EconomicEventInput"
+      responses:
+        "201":
+          description: Event created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EconomicEvent"
+
+  /admin/calendar-events/{id}:
+    put:
+      operationId: updateAdminCalendarEvent
+      tags: [admin]
+      summary: Update a calendar event
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EconomicEventInput"
+      responses:
+        "200":
+          description: Event updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EconomicEvent"
+    delete:
+      operationId: deleteAdminCalendarEvent
+      tags: [admin]
+      summary: Delete a calendar event
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Event deleted
+
+  /admin/settings:
+    get:
+      operationId: getAdminSettings
+      tags: [admin]
+      summary: Get dashboard settings
+      responses:
+        "200":
+          description: Dashboard settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSettings"
+    put:
+      operationId: updateAdminSettings
+      tags: [admin]
+      summary: Update dashboard settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DashboardSettingsInput"
+      responses:
+        "200":
+          description: Settings updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSettings"
+
 components:
   schemas:
     HealthStatus:
       type: object
+      required: [status]
       properties:
         status:
           type: string
-      required:
-        - status
 
+    MarketQuote:
+      type: object
+      required: [symbol, name, price, change, changePercent, volume, category, marketStatus]
+      properties:
+        symbol:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+        change:
+          type: number
+        changePercent:
+          type: number
+        volume:
+          type: number
+        high24h:
+          type: ["number", "null"]
+        low24h:
+          type: ["number", "null"]
+        marketCap:
+          type: ["number", "null"]
+        currency:
+          type: string
+        category:
+          type: string
+          enum: [indices, stocks, bist, etf, commodities, crypto, currencies]
+        marketStatus:
+          type: string
+          enum: [open, closed, pre, after]
+        sparkline:
+          type: array
+          items:
+            type: number
+        updatedAt:
+          type: string
+          format: date-time
+
+    MarketQuoteDetail:
+      type: object
+      required: [symbol, name, price, change, changePercent, volume, category, marketStatus]
+      properties:
+        symbol:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+        change:
+          type: number
+        changePercent:
+          type: number
+        volume:
+          type: number
+        high24h:
+          type: ["number", "null"]
+        low24h:
+          type: ["number", "null"]
+        marketCap:
+          type: ["number", "null"]
+        currency:
+          type: string
+        category:
+          type: string
+          enum: [indices, stocks, bist, etf, commodities, crypto, currencies]
+        marketStatus:
+          type: string
+          enum: [open, closed, pre, after]
+        sparkline:
+          type: array
+          items:
+            type: number
+        dayOpen:
+          type: ["number", "null"]
+        previousClose:
+          type: ["number", "null"]
+        fiftyTwoWeekHigh:
+          type: ["number", "null"]
+        fiftyTwoWeekLow:
+          type: ["number", "null"]
+        avgVolume:
+          type: ["number", "null"]
+        updatedAt:
+          type: string
+          format: date-time
+
+    OHLCVBar:
+      type: object
+      required: [timestamp, open, high, low, close, volume]
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        open:
+          type: number
+        high:
+          type: number
+        low:
+          type: number
+        close:
+          type: number
+        volume:
+          type: number
+
+    NewsArticle:
+      type: object
+      required: [id, title, source, publishedAt, category, url]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        source:
+          type: string
+        publishedAt:
+          type: string
+          format: date-time
+        summary:
+          type: ["string", "null"]
+        url:
+          type: string
+        imageUrl:
+          type: ["string", "null"]
+        category:
+          type: string
+          enum: [stock_market, central_banks, inflation, interest_rates, commodities, crypto, global_markets, company_news]
+
+    NewsPage:
+      type: object
+      required: [articles, total]
+      properties:
+        articles:
+          type: array
+          items:
+            $ref: "#/components/schemas/NewsArticle"
+        total:
+          type: number
+
+    EconomicEvent:
+      type: object
+      required: [id, name, country, eventDate, importance]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        country:
+          type: string
+        eventDate:
+          type: string
+          format: date-time
+        importance:
+          type: string
+          enum: [high, medium, low]
+        actual:
+          type: ["string", "null"]
+        forecast:
+          type: ["string", "null"]
+        previous:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        category:
+          type: ["string", "null"]
+
+    EconomicEventInput:
+      type: object
+      required: [name, country, eventDate, importance]
+      properties:
+        name:
+          type: string
+        country:
+          type: string
+        eventDate:
+          type: string
+          format: date-time
+        importance:
+          type: string
+          enum: [high, medium, low]
+        actual:
+          type: string
+        forecast:
+          type: string
+        previous:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+
+    AiSummary:
+      type: object
+      required: [type, content, generatedAt]
+      properties:
+        type:
+          type: string
+          enum: [morning, closing, alerts]
+        content:
+          type: string
+        highlights:
+          type: array
+          items:
+            type: string
+        sentiment:
+          type: string
+          enum: [bullish, bearish, neutral]
+        generatedAt:
+          type: string
+          format: date-time
+
+    CompanyDetail:
+      type: object
+      required: [symbol, name, price, change, changePercent]
+      properties:
+        symbol:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+        change:
+          type: number
+        changePercent:
+          type: number
+        marketCap:
+          type: ["number", "null"]
+        revenue:
+          type: ["number", "null"]
+        netIncome:
+          type: ["number", "null"]
+        peRatio:
+          type: ["number", "null"]
+        debtToEquity:
+          type: ["number", "null"]
+        eps:
+          type: ["number", "null"]
+        dividendYield:
+          type: ["number", "null"]
+        sector:
+          type: ["string", "null"]
+        industry:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        employees:
+          type: ["number", "null"]
+        country:
+          type: ["string", "null"]
+        website:
+          type: ["string", "null"]
+        news:
+          type: array
+          items:
+            $ref: "#/components/schemas/NewsArticle"
+
+    TrackedAsset:
+      type: object
+      required: [id, symbol, name, category, isActive]
+      properties:
+        id:
+          type: string
+        symbol:
+          type: string
+        name:
+          type: string
+        category:
+          type: string
+          enum: [indices, stocks, bist, etf, commodities, crypto, currencies]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    TrackedAssetInput:
+      type: object
+      required: [symbol, name, category]
+      properties:
+        symbol:
+          type: string
+        name:
+          type: string
+        category:
+          type: string
+          enum: [indices, stocks, bist, etf, commodities, crypto, currencies]
+
+    TrackedAssetUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+          enum: [indices, stocks, bist, etf, commodities, crypto, currencies]
+        isActive:
+          type: boolean
+
+    NewsSource:
+      type: object
+      required: [id, name, url, type, isActive]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        url:
+          type: string
+        type:
+          type: string
+          enum: [rss, api]
+        category:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    NewsSourceInput:
+      type: object
+      required: [name, url, type]
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+        type:
+          type: string
+          enum: [rss, api]
+        category:
+          type: string
+
+    DashboardSettings:
+      type: object
+      required: [refreshInterval, theme, enableAiSummaries]
+      properties:
+        refreshInterval:
+          type: number
+          description: Data refresh interval in seconds
+        defaultCategory:
+          type: string
+        theme:
+          type: string
+          enum: [matrix, dark]
+        enableAiSummaries:
+          type: boolean
+        aiSummarySchedule:
+          type: ["string", "null"]
+
+    DashboardSettingsInput:
+      type: object
+      properties:
+        refreshInterval:
+          type: number
+        defaultCategory:
+          type: string
+        theme:
+          type: string
+          enum: [matrix, dark]
+        enableAiSummaries:
+          type: boolean
+        aiSummarySchedule:
+          type: string
