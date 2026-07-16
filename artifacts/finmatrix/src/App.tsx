@@ -13,21 +13,16 @@ const queryClient = new QueryClient();
 
 function NotFound() {
   return (
-    <div className="min-h-screen bg-black text-primary font-mono flex items-center justify-center p-4">
-      <div className="border border-destructive/50 bg-destructive/10 p-8 max-w-md w-full relative">
-        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-destructive"></div>
-        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-destructive"></div>
-        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-destructive"></div>
-        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-destructive"></div>
-        
-        <h1 className="text-destructive font-bold text-2xl mb-4 flex items-center gap-3">
-          <span className="animate-pulse">⚠</span> ERROR 404
+    <div className="min-h-[100dvh] bg-[var(--bg-base)] text-[var(--text-primary)] flex items-center justify-center p-4 font-sans">
+      <div className="border border-[var(--border)] bg-[var(--bg-surface)] p-8 max-w-md w-full rounded-[10px] text-center">
+        <h1 className="text-[var(--text-primary)] font-semibold text-lg mb-2">
+          Page Not Found
         </h1>
-        <p className="text-sm text-destructive/80 mb-6 uppercase">
-          Sector sector not found. The requested terminal pathway does not exist or access is restricted.
+        <p className="text-[14px] text-[var(--text-secondary)] mb-6">
+          The requested section could not be found or access is restricted.
         </p>
-        <a href="/" className="inline-block text-xs border border-destructive/50 text-destructive px-4 py-2 hover:bg-destructive hover:text-black transition-colors">
-          RETURN TO COMMAND CENTER
+        <a href="/" className="inline-block text-[13px] font-medium bg-[var(--bg-input)] border border-[var(--border)] text-[var(--text-primary)] px-4 py-2 rounded-[8px] hover:bg-[var(--bg-elevated)] transition-colors">
+          Return to Dashboard
         </a>
       </div>
     </div>

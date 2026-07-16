@@ -18,33 +18,33 @@ export default function Calendar() {
 
   const getDateLabel = (dateStr: string) => {
     const d = new Date(dateStr);
-    if (isToday(d)) return "TODAY";
-    if (isTomorrow(d)) return "TOMORROW";
-    return format(d, 'EEEE, MMM dd').toUpperCase();
+    if (isToday(d)) return "Today";
+    if (isTomorrow(d)) return "Tomorrow";
+    return format(d, 'EEEE, MMM dd');
   };
 
   return (
     <Layout>
-      <div className="h-full flex flex-col gap-4 max-w-[1200px] mx-auto">
+      <div className="h-full flex flex-col gap-4 max-w-[1000px] mx-auto">
         <div className="flex-1 min-h-0">
           {isLoading ? (
-            <LoadingPanel title="ECONOMIC CALENDAR" />
+            <LoadingPanel title="Economic Calendar" />
           ) : error ? (
-            <ErrorPanel title="CALENDAR ERROR" error={error} />
+            <ErrorPanel title="Calendar Error" error={error} />
           ) : (
-            <Panel title="GLOBAL ECONOMIC CALENDAR (7 DAY OUTLOOK)" className="h-full">
-              <div className="h-full overflow-auto pr-4">
-                <div className="flex flex-col gap-8 pb-10">
+            <Panel title="Global Economic Calendar (7 Day Outlook)" className="h-full">
+              <div className="h-full overflow-auto pr-4 custom-scrollbar">
+                <div className="flex flex-col gap-10 pb-10">
                   {sortedDates.map(date => (
                     <div key={date} className="relative">
                       {/* Date Header */}
-                      <div className="sticky top-0 z-20 bg-card py-2 border-b-2 border-primary/50 mb-4 flex items-center justify-between">
-                        <h2 className="text-xl font-bold text-white tracking-wider">{getDateLabel(date)}</h2>
-                        <span className="font-mono text-muted-foreground">{date}</span>
+                      <div className="sticky top-0 z-20 bg-[var(--bg-surface)] py-3 border-b border-[var(--border)] mb-4 flex items-center justify-between">
+                        <h2 className="text-[14px] font-semibold text-[var(--text-primary)]">{getDateLabel(date)}</h2>
+                        <span className="text-[12px] text-[var(--text-muted)] font-medium tabular-nums">{date}</span>
                       </div>
 
                       {/* Events List */}
-                      <div className="flex flex-col gap-2">
+                      <div className="flex flex-col gap-3">
                         {groupedEvents?.[date].map(event => {
                           const eventDate = new Date(event.eventDate);
                           const isHigh = event.importance === 'high';
@@ -54,46 +54,44 @@ export default function Calendar() {
                           return (
                             <div 
                               key={event.id} 
-                              className={`flex flex-col md:flex-row md:items-center gap-4 p-3 border transition-colors ${
-                                past ? 'opacity-50 hover:opacity-100 bg-transparent border-primary/10' : 
-                                isHigh ? 'bg-destructive/5 border-destructive/30 hover:border-destructive/60' : 
-                                isMed ? 'bg-amber-500/5 border-amber-500/30 hover:border-amber-500/60' : 
-                                'bg-primary/5 border-primary/20 hover:border-primary/50'
+                              className={`flex flex-col md:flex-row md:items-center gap-4 p-4 rounded-[8px] border transition-colors ${
+                                past ? 'opacity-60 bg-[var(--bg-base)] border-transparent' : 
+                                'bg-[var(--bg-base)] border-[var(--border)] hover:border-[var(--text-muted)]'
                               }`}
                             >
-                              <div className="flex items-center gap-4 w-full md:w-48 shrink-0 font-mono">
-                                <div className="text-lg font-bold text-primary w-16">{format(eventDate, 'HH:mm')}</div>
-                                <div className={`text-[10px] px-2 py-0.5 font-bold w-16 text-center ${
-                                  isHigh ? 'bg-destructive text-destructive-foreground' : 
-                                  isMed ? 'bg-amber-500 text-black' : 
-                                  'bg-primary/20 text-primary'
+                              <div className="flex items-center gap-4 w-full md:w-[220px] shrink-0">
+                                <div className="text-[14px] font-medium text-[var(--text-secondary)] w-14 tabular-nums">{format(eventDate, 'HH:mm')}</div>
+                                <div className={`text-[10px] px-2 py-0.5 rounded-[4px] font-bold tracking-[0.04em] w-[60px] text-center ${
+                                  isHigh ? 'bg-[rgba(239,68,68,0.1)] text-[var(--negative)]' : 
+                                  isMed ? 'bg-[rgba(245,158,11,0.1)] text-[#f59e0b]' : 
+                                  'bg-[var(--bg-input)] text-[var(--text-muted)]'
                                 }`}>
                                   {event.importance.toUpperCase()}
                                 </div>
-                                <div className="text-lg font-bold text-muted-foreground">{event.country}</div>
+                                <div className="text-[13px] font-medium text-[var(--text-secondary)] uppercase">{event.country}</div>
                               </div>
                               
-                              <div className="flex-1">
-                                <div className="text-base font-bold text-foreground">{event.name}</div>
+                              <div className="flex-1 min-w-0">
+                                <div className="text-[15px] font-medium text-[var(--text-primary)] truncate">{event.name}</div>
                                 {event.description && (
-                                  <div className="text-xs text-muted-foreground mt-1 line-clamp-1">{event.description}</div>
+                                  <div className="text-[13px] text-[var(--text-muted)] mt-1 line-clamp-1">{event.description}</div>
                                 )}
                               </div>
                               
-                              <div className="flex items-center gap-6 w-full md:w-auto shrink-0 font-mono text-sm">
-                                <div className="w-20 text-right">
-                                  <div className="text-[10px] text-muted-foreground mb-0.5">ACTUAL</div>
-                                  <div className={`font-bold ${event.actual ? 'text-primary' : 'text-muted-foreground'}`}>
+                              <div className="flex items-center gap-6 w-full md:w-auto shrink-0 text-[13px] tabular-nums">
+                                <div className="w-[70px] text-right">
+                                  <div className="text-[10px] text-[var(--text-muted)] font-medium tracking-[0.04em] mb-1">ACTUAL</div>
+                                  <div className={`font-medium ${event.actual ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)]'}`}>
                                     {event.actual || '-'}
                                   </div>
                                 </div>
-                                <div className="w-20 text-right">
-                                  <div className="text-[10px] text-muted-foreground mb-0.5">FORECAST</div>
-                                  <div>{event.forecast || '-'}</div>
+                                <div className="w-[70px] text-right">
+                                  <div className="text-[10px] text-[var(--text-muted)] font-medium tracking-[0.04em] mb-1">FORECAST</div>
+                                  <div className="text-[var(--text-primary)]">{event.forecast || '-'}</div>
                                 </div>
-                                <div className="w-20 text-right">
-                                  <div className="text-[10px] text-muted-foreground mb-0.5">PREVIOUS</div>
-                                  <div className="text-muted-foreground">{event.previous || '-'}</div>
+                                <div className="w-[70px] text-right">
+                                  <div className="text-[10px] text-[var(--text-muted)] font-medium tracking-[0.04em] mb-1">PREVIOUS</div>
+                                  <div className="text-[var(--text-secondary)]">{event.previous || '-'}</div>
                                 </div>
                               </div>
                             </div>
@@ -103,8 +101,8 @@ export default function Calendar() {
                     </div>
                   ))}
                   {sortedDates.length === 0 && (
-                    <div className="py-12 text-center text-muted-foreground font-mono">
-                      NO EVENTS SCHEDULED.
+                    <div className="py-16 text-center text-[var(--text-muted)]">
+                      No events scheduled.
                     </div>
                   )}
                 </div>

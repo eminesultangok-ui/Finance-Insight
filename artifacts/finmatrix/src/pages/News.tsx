@@ -5,15 +5,15 @@ import { Panel, LoadingPanel, ErrorPanel } from "@/components/Panel";
 import { format } from "date-fns";
 
 const CATEGORIES = [
-  { id: "all", label: "ALL NEWS" },
-  { id: "stock_market", label: "STOCK MARKET" },
-  { id: "central_banks", label: "CENTRAL BANKS" },
-  { id: "inflation", label: "INFLATION" },
-  { id: "interest_rates", label: "INTEREST RATES" },
-  { id: "commodities", label: "COMMODITIES" },
-  { id: "crypto", label: "CRYPTO" },
-  { id: "global_markets", label: "GLOBAL MARKETS" },
-  { id: "company_news", label: "COMPANY NEWS" },
+  { id: "all", label: "All News" },
+  { id: "stock_market", label: "Stock Market" },
+  { id: "central_banks", label: "Central Banks" },
+  { id: "inflation", label: "Inflation" },
+  { id: "interest_rates", label: "Interest Rates" },
+  { id: "commodities", label: "Commodities" },
+  { id: "crypto", label: "Crypto" },
+  { id: "global_markets", label: "Global Markets" },
+  { id: "company_news", label: "Company News" },
 ];
 
 export default function News() {
@@ -28,18 +28,18 @@ export default function News() {
 
   return (
     <Layout>
-      <div className="h-full flex flex-col gap-4 max-w-[1200px] mx-auto">
-        <Panel className="shrink-0 p-0 overflow-visible">
-          <div className="flex items-center p-2 border-b border-primary/30 overflow-x-auto custom-scrollbar">
-            <div className="flex gap-1">
+      <div className="h-full flex flex-col gap-5 max-w-[1200px] mx-auto">
+        <Panel className="shrink-0 p-0 overflow-visible bg-transparent border-none">
+          <div className="flex items-center pb-2 overflow-x-auto custom-scrollbar">
+            <div className="flex gap-2">
               {CATEGORIES.map(cat => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`px-3 py-1.5 text-xs font-bold whitespace-nowrap transition-colors border ${
+                  className={`px-4 py-1.5 text-[13px] font-medium rounded-[100px] whitespace-nowrap transition-colors border ${
                     activeCategory === cat.id 
-                      ? 'bg-primary/20 text-primary border-primary' 
-                      : 'border-transparent text-muted-foreground hover:text-primary hover:bg-primary/5'
+                      ? 'bg-[var(--accent)] text-white border-[var(--accent)]' 
+                      : 'bg-[var(--bg-input)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] border-[var(--border)]'
                   }`}
                 >
                   {cat.label}
@@ -51,50 +51,46 @@ export default function News() {
 
         <div className="flex-1 min-h-0">
           {isLoading ? (
-            <LoadingPanel title="NEWS FEED" />
+            <LoadingPanel title="News Feed" />
           ) : error ? (
-            <ErrorPanel title="NEWS ERROR" error={error} />
+            <ErrorPanel title="News Error" error={error} />
           ) : (
-            <Panel title={`${activeCategory.replace('_', ' ').toUpperCase()} FEED`} className="h-full bg-black/50">
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 h-full overflow-auto pr-2 pb-8">
-                {news?.articles.map((article) => (
-                  <a 
-                    key={article.id} 
-                    href={article.url} 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    className="flex flex-col border border-primary/30 bg-card hover:bg-primary/5 hover:border-primary/60 transition-colors p-4 group relative overflow-hidden"
-                  >
-                    <div className="absolute top-0 right-0 w-16 h-16 bg-primary/10 rounded-bl-full -z-10 group-hover:bg-primary/20 transition-colors"></div>
-                    
-                    <div className="flex justify-between items-start gap-2 mb-3">
-                      <span className="text-[10px] text-primary bg-primary/10 px-2 py-0.5 font-bold uppercase tracking-wider border border-primary/20">{article.source}</span>
-                      <span className="text-[10px] text-muted-foreground font-mono">{format(new Date(article.publishedAt), 'MMM dd, HH:mm')}</span>
-                    </div>
-                    
-                    <h3 className="text-lg font-bold leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-3">
-                      {article.title}
-                    </h3>
-                    
-                    {article.summary && (
-                      <p className="text-sm text-muted-foreground line-clamp-3 mb-4 flex-1 font-sans">
-                        {article.summary}
-                      </p>
-                    )}
-                    
-                    <div className="mt-auto pt-3 border-t border-primary/10 flex justify-between items-center text-xs font-bold">
-                      <span className="text-muted-foreground uppercase">{article.category.replace('_', ' ')}</span>
-                      <span className="text-primary group-hover:translate-x-1 transition-transform">READ →</span>
-                    </div>
-                  </a>
-                ))}
-                {news?.articles.length === 0 && (
-                  <div className="col-span-full py-12 text-center text-muted-foreground font-mono">
-                    NO NEWS ARTICLES FOUND IN THIS CATEGORY.
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 h-full overflow-auto pb-8 custom-scrollbar pr-2">
+              {news?.articles.map((article) => (
+                <a 
+                  key={article.id} 
+                  href={article.url} 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  className="flex flex-col border border-[var(--border)] bg-[var(--bg-surface)] rounded-[10px] hover:bg-[var(--bg-elevated)] hover:border-[var(--text-muted)] transition-all p-5 group"
+                >
+                  <div className="flex justify-between items-start gap-2 mb-3">
+                    <span className="text-[11px] font-medium tracking-[0.04em] text-[var(--text-secondary)] uppercase">{article.source}</span>
+                    <span className="text-[11px] text-[var(--text-muted)] tabular-nums">{format(new Date(article.publishedAt), 'MMM dd, HH:mm')}</span>
                   </div>
-                )}
-              </div>
-            </Panel>
+                  
+                  <h3 className="text-[16px] font-semibold leading-[1.4] mb-3 group-hover:text-[var(--accent)] transition-colors text-[var(--text-primary)]">
+                    {article.title}
+                  </h3>
+                  
+                  {article.summary && (
+                    <p className="text-[14px] text-[var(--text-secondary)] leading-[1.6] line-clamp-3 mb-5 flex-1">
+                      {article.summary}
+                    </p>
+                  )}
+                  
+                  <div className="mt-auto pt-4 border-t border-[var(--border-subtle)] flex justify-between items-center text-[12px] font-medium">
+                    <span className="text-[var(--text-muted)] capitalize">{article.category.replace('_', ' ')}</span>
+                    <span className="text-[var(--accent)]">Read article →</span>
+                  </div>
+                </a>
+              ))}
+              {news?.articles.length === 0 && (
+                <div className="col-span-full py-16 text-center text-[var(--text-muted)] bg-[var(--bg-surface)] border border-[var(--border)] rounded-[10px]">
+                  No news articles found in this category.
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>

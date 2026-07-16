@@ -10,25 +10,22 @@ export function Layout({ children }: LayoutProps) {
   const [location] = useLocation();
 
   const navItems = [
-    { href: "/", label: "COMMAND CENTER", icon: LayoutDashboard },
-    { href: "/market", label: "MARKET TERMINAL", icon: BarChart2 },
-    { href: "/news", label: "NEWS HUB", icon: Globe },
-    { href: "/calendar", label: "ECONOMIC CAL", icon: Activity },
-    { href: "/admin", label: "ADMIN", icon: Settings },
+    { href: "/", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/market", label: "Markets", icon: BarChart2 },
+    { href: "/news", label: "News", icon: Globe },
+    { href: "/calendar", label: "Calendar", icon: Activity },
+    { href: "/admin", label: "Admin", icon: Settings },
   ];
 
   return (
-    <div className="min-h-screen bg-black text-foreground font-mono flex flex-col dark overflow-hidden relative">
-      <div className="crt-overlay"></div>
-      <div className="scanline"></div>
-      
+    <div className="min-h-[100dvh] bg-[var(--bg-base)] text-[var(--text-primary)] font-sans flex flex-col dark overflow-hidden relative">
       {/* Header/Nav */}
-      <header className="border-b border-primary/50 bg-black/80 backdrop-blur z-40 relative px-4 h-14 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-6">
-          <div className="text-primary font-bold text-xl tracking-tighter flex items-center gap-2">
-            <span className="text-2xl animate-pulse">■</span> FINMATRIX
+      <header className="border-b border-[var(--border)] bg-[var(--bg-surface)] z-40 relative px-6 h-[52px] flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-8 h-full">
+          <div className="text-[var(--text-primary)] text-[14px] font-bold tracking-[0.08em] flex items-center gap-2 uppercase">
+            FINMATRIX
           </div>
-          <nav className="flex items-center gap-1">
+          <nav className="flex items-center h-full gap-2">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location === item.href || (location.startsWith(item.href) && item.href !== "/");
@@ -37,10 +34,10 @@ export function Layout({ children }: LayoutProps) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors border ${
+                  className={`flex items-center gap-2 px-3 py-1.5 text-[13px] font-medium rounded-[6px] transition-colors ${
                     isActive 
-                      ? "bg-primary/10 text-primary border-primary shadow-[0_0_10px_rgba(0,180,255,0.3)]" 
-                      : "text-muted-foreground border-transparent hover:text-primary hover:border-primary/30"
+                      ? "bg-[var(--accent-muted)] text-[var(--accent)]" 
+                      : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)]"
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -51,23 +48,23 @@ export function Layout({ children }: LayoutProps) {
           </nav>
         </div>
         
-        <div className="flex items-center gap-4 text-xs">
+        <div className="flex items-center gap-6 text-[12px]">
           <div className="flex items-center gap-2">
-            <span className="text-muted-foreground">STATUS:</span>
-            <span className="text-positive flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-positive animate-pulse-fast inline-block"></span>
-              ONLINE
+            <span className="text-[var(--text-secondary)] font-medium tracking-[0.04em] uppercase">Status</span>
+            <span className="text-[var(--positive)] flex items-center gap-1.5 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--positive)] inline-block"></span>
+              LIVE
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-muted-foreground">TIME:</span>
-            <span className="text-primary">{new Date().toISOString().substring(11, 19)} UTC</span>
+            <span className="text-[var(--text-secondary)] font-medium tracking-[0.04em] uppercase">Time</span>
+            <span className="text-[var(--text-muted)] tabular-nums">{new Date().toISOString().substring(11, 19)} UTC</span>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto relative z-30 p-4">
+      <main className="flex-1 overflow-auto relative z-30 p-5 max-w-full">
         {children}
       </main>
     </div>
